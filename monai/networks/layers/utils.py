@@ -43,8 +43,51 @@ def get_norm_layer(name: tuple | str, spatial_dims: int | None = 1, channels: in
     if name == "":
         return torch.nn.Identity()
     norm_name, norm_args = split_args(name)
+    
+    # PATCH: Handle "layer" normalization for spatial convolutions
+    # LayerNorm requires normalized_shape, not num_features/num_channels
+    # For spatial convolutions (2D/3D), we need wrappers that handle channel-first format
+    if norm_name == "layer" and spatial_dims in (2, 3):
+        if spatial_dims == 3:
+            class LayerNorm3D(torch.nn.Module):
+                def __init__(self, normalized_shape, norm_layer=torch.nn.LayerNorm):
+                    super().__init__()
+                    self.ln = norm_layer(normalized_shape) if norm_layer is not None else torch.nn.Identity()
+                
+                def forward(self, x):
+                    # x: N C D H W -> N D H W C
+                    x = x.permute(0, 2, 3, 4, 1)
+                    x = self.ln(x)
+                    x = x.permute(0, 4, 1, 2, 3)  # N D H W C -> N C D H W
+                    return x
+            return LayerNorm3D(normalized_shape=channels)
+        elif spatial_dims == 2:
+            class LayerNorm2D(torch.nn.Module):
+                def __init__(self, normalized_shape):
+                    super().__init__()
+                    self.ln = torch.nn.LayerNorm(normalized_shape)
+                
+                def forward(self, x):
+                    # x: N C H W -> N H W C
+                    x = x.permute(0, 2, 3, 1)
+                    x = self.ln(x)
+                    x = x.permute(0, 3, 1, 2)  # N H W C -> N C H W
+                    return x
+            return LayerNorm2D(normalized_shape=channels)
+    
+    # For non-spatial or other normalization types, use the factory
     norm_type = Norm[norm_name, spatial_dims]
     kw_args = dict(norm_args)
+    
+    # PATCH: Handle LayerNorm specially - it requires normalized_shape, not num_features/num_channels
+    if norm_name == "layer":
+        if "normalized_shape" not in kw_args:
+            kw_args["normalized_shape"] = channels
+        # Remove any incorrect parameters that might have been added
+        kw_args.pop("num_features", None)
+        kw_args.pop("num_channels", None)
+        return norm_type(**kw_args)
+    
     if has_option(norm_type, "num_features") and "num_features" not in kw_args:
         kw_args["num_features"] = channels
     if has_option(norm_type, "num_channels") and "num_channels" not in kw_args:
