@@ -78,3 +78,20 @@ class MLPBlock(nn.Module):
         x = self.linear2(x)
         x = self.drop2(x)
         return x
+
+
+class SwiGLU(nn.Module):
+    """
+    SwiGLU activation function, based on: 
+    https://github.com/FadiZidiDz/LoLA-SpecViT-Model/blob/main/improved_GCPE.py#L19
+    https://arxiv.org/abs/2002.05202
+    """
+    def __init__(self, input_dim: int, hidden_dim: int, output_dim: int, dropout_rate: float = 0.0):
+        super().__init__()
+        self.fc1 = nn.Linear(input_dim, hidden_dim)
+        self.fc2 = nn.Linear(input_dim, hidden_dim)
+        self.fc3 = nn.Linear(hidden_dim, output_dim)
+        self.dropout = nn.Dropout(dropout_rate)
+
+    def forward(self, x):
+        return self.fc3(self.dropout(nn.functional.silu(self.fc1(x)) * self.fc2(x)))
