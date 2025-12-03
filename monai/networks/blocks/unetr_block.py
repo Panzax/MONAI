@@ -33,6 +33,7 @@ class UnetrUpBlock(nn.Module):
         kernel_size: Sequence[int] | int,
         upsample_kernel_size: Sequence[int] | int,
         norm_name: tuple | str,
+        act_name: tuple | str = ("leakyrelu", {"inplace": True, "negative_slope": 0.01}),
         res_block: bool = False,
     ) -> None:
         """
@@ -67,6 +68,7 @@ class UnetrUpBlock(nn.Module):
                 kernel_size=kernel_size,
                 stride=1,
                 norm_name=norm_name,
+                act_name=act_name,
             )
         else:
             self.conv_block = UnetBasicBlock(  # type: ignore
@@ -76,6 +78,7 @@ class UnetrUpBlock(nn.Module):
                 kernel_size=kernel_size,
                 stride=1,
                 norm_name=norm_name,
+                act_name=act_name,
             )
 
     def forward(self, inp, skip):
@@ -220,6 +223,7 @@ class UnetrBasicBlock(nn.Module):
         kernel_size: Sequence[int] | int,
         stride: Sequence[int] | int,
         norm_name: tuple | str,
+        act_name: tuple | str = ("leakyrelu", {"inplace": True, "negative_slope": 0.01}),
         res_block: bool = False,
     ) -> None:
         """
@@ -244,6 +248,7 @@ class UnetrBasicBlock(nn.Module):
                 kernel_size=kernel_size,
                 stride=stride,
                 norm_name=norm_name,
+                act_name=act_name,
             )
         else:
             self.layer = UnetBasicBlock(  # type: ignore
@@ -253,6 +258,7 @@ class UnetrBasicBlock(nn.Module):
                 kernel_size=kernel_size,
                 stride=stride,
                 norm_name=norm_name,
+                act_name=act_name,
             )
 
     def forward(self, inp):

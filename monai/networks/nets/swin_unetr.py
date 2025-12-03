@@ -63,6 +63,7 @@ class SwinUNETR(nn.Module):
         mlp_type: str = "mlp",
         feature_size: int = 24,
         norm_name: tuple | str = "instance",
+        act_name: tuple | str = ("leakyrelu", {"inplace": True, "negative_slope": 0.01}),
         drop_rate: float = 0.0,
         attn_drop_rate: float = 0.0,
         dropout_path_rate: float = 0.0,
@@ -164,6 +165,7 @@ class SwinUNETR(nn.Module):
             kernel_size=3,
             stride=1,
             norm_name=norm_name,
+            act_name=act_name,
             res_block=True,
         )
 
@@ -174,6 +176,7 @@ class SwinUNETR(nn.Module):
             kernel_size=3,
             stride=1,
             norm_name=norm_name,
+            act_name=act_name,
             res_block=True,
         )
 
@@ -184,6 +187,7 @@ class SwinUNETR(nn.Module):
             kernel_size=3,
             stride=1,
             norm_name=norm_name,
+            act_name=act_name,
             res_block=True,
         )
 
@@ -194,6 +198,7 @@ class SwinUNETR(nn.Module):
             kernel_size=3,
             stride=1,
             norm_name=norm_name,
+            act_name=act_name,
             res_block=True,
         )
 
@@ -204,6 +209,7 @@ class SwinUNETR(nn.Module):
             kernel_size=3,
             stride=1,
             norm_name=norm_name,
+            act_name=act_name,
             res_block=True,
         )
 
@@ -214,6 +220,7 @@ class SwinUNETR(nn.Module):
             kernel_size=3,
             upsample_kernel_size=2,
             norm_name=norm_name,
+            act_name=act_name,
             res_block=True,
         )
 
@@ -224,6 +231,7 @@ class SwinUNETR(nn.Module):
             kernel_size=3,
             upsample_kernel_size=2,
             norm_name=norm_name,
+            act_name=act_name,
             res_block=True,
         )
 
@@ -234,6 +242,7 @@ class SwinUNETR(nn.Module):
             kernel_size=3,
             upsample_kernel_size=2,
             norm_name=norm_name,
+            act_name=act_name,
             res_block=True,
         )
         self.decoder2 = UnetrUpBlock(
@@ -243,6 +252,7 @@ class SwinUNETR(nn.Module):
             kernel_size=3,
             upsample_kernel_size=2,
             norm_name=norm_name,
+            act_name=act_name,
             res_block=True,
         )
 
@@ -253,6 +263,7 @@ class SwinUNETR(nn.Module):
             kernel_size=3,
             upsample_kernel_size=2,
             norm_name=norm_name,
+            act_name=act_name,
             res_block=True,
         )
 

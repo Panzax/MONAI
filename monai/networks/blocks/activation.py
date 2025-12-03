@@ -182,3 +182,21 @@ class GEGLU(nn.Module):
     def forward(self, input: torch.Tensor):
         x, gate = input.chunk(2, dim=-1)
         return x * nn.functional.gelu(gate)
+
+class ReLUSquared(nn.Module):
+    r"""Applies the element-wise function:
+
+    .. math::
+        \text{ReLUSquared}(x) = \text{ReLU}(x)^2
+
+    Shape:
+        - Input: :math:`(N, *)` where `*` means, any number of additional dimensions
+        - Output: :math:`(N, *)`, same shape as the input
+    """
+    
+    def __init__(self, inplace: bool = False):
+        super().__init__()
+        self.inplace = inplace
+
+    def forward(self, input: torch.Tensor):
+        return nn.functional.relu(input, inplace=self.inplace) ** 2

@@ -69,6 +69,7 @@ import torch.nn as nn
 
 from monai.networks.utils import has_nvfuser_instance_norm
 from monai.utils import ComponentStore, look_up_option, optional_import
+from monai.networks.blocks.activation import ReLUSquared
 
 __all__ = ["LayerFactory", "Dropout", "Norm", "Act", "Conv", "Pool", "Pad", "RelPosEmbedding", "split_args"]
 
@@ -290,6 +291,7 @@ Norm.add_factory_class("syncbatch", nn.SyncBatchNorm)
 
 Act.add_factory_class("elu", nn.modules.ELU)
 Act.add_factory_class("relu", nn.modules.ReLU)
+Act.add_factory_class("relusquared", ReLUSquared)
 Act.add_factory_class("leakyrelu", nn.modules.LeakyReLU)
 Act.add_factory_class("prelu", nn.modules.PReLU)
 Act.add_factory_class("relu6", nn.modules.ReLU6)
