@@ -69,7 +69,6 @@ import torch.nn as nn
 
 from monai.networks.utils import has_nvfuser_instance_norm
 from monai.utils import ComponentStore, look_up_option, optional_import
-from monai.networks.blocks.activation import ReLUSquared
 
 __all__ = ["LayerFactory", "Dropout", "Norm", "Act", "Conv", "Pool", "Pad", "RelPosEmbedding", "split_args"]
 
@@ -291,7 +290,6 @@ Norm.add_factory_class("syncbatch", nn.SyncBatchNorm)
 
 Act.add_factory_class("elu", nn.modules.ELU)
 Act.add_factory_class("relu", nn.modules.ReLU)
-Act.add_factory_class("relusquared", ReLUSquared)
 Act.add_factory_class("leakyrelu", nn.modules.LeakyReLU)
 Act.add_factory_class("prelu", nn.modules.PReLU)
 Act.add_factory_class("relu6", nn.modules.ReLU6)
@@ -302,6 +300,19 @@ Act.add_factory_class("sigmoid", nn.modules.Sigmoid)
 Act.add_factory_class("tanh", nn.modules.Tanh)
 Act.add_factory_class("softmax", nn.modules.Softmax)
 Act.add_factory_class("logsoftmax", nn.modules.LogSoftmax)
+
+
+@Act.factory_function("relusquared")
+def relusquared_factory():
+    """
+    ReLUSquared activation layer.
+
+    Returns:
+        ReLUSquared
+    """
+    from monai.networks.blocks.activation import ReLUSquared
+
+    return ReLUSquared
 
 
 @Act.factory_function("swish")
